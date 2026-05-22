@@ -4,6 +4,7 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Selamat Datang</Text>
+      <Text style={styles.subTitle}>Silakan masuk ke akun anda</Text>
     </View>
   );
 }
@@ -18,6 +19,11 @@ const styles = StyleSheet.create({
     color: "#744577",
     fontSize: 20,
     fontWeight: "bold",
-    margin: 20,
+    marginHorizontal: 20,
+  },
+  subTitle: {
+    color: "#744577",
+    fontSize: 15,
+    marginHorizontal: 20,
   },
 });
