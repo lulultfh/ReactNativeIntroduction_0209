@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
@@ -21,6 +22,12 @@ export default function Index() {
       "Sukses",
       `Data terkirim!\n\nEmail: ${email}\nPassword: ${password}`,
     );
+    router.push({
+      pathname: "/dashboard",
+      params: {
+        email: email,
+      },
+    });
   };
 
   return (
