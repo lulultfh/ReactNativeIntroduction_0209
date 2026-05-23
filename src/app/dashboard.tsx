@@ -59,6 +59,9 @@ export default function home() {
   const [selectedTrip, setSelectedTrip] = useState<"round" | "one" | "multi">(
     "round",
   );
+  const [activeTab, setActiveTab] = useState<
+    "home" | "ticket" | "bell" | "profile"
+  >("home");
 
   const handleSubmit = () => {
     if (!lokasi || !destinasi || !departure || !kembali) {
@@ -71,133 +74,183 @@ export default function home() {
     );
   };
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.hero}>
-        <View style={styles.row}>
-          <View style={styles.textWrap}>
-            <Text style={styles.text}>Hello, {email}</Text>
-            <Text style={styles.text2}>Book your next flight</Text>
+    <View style={styles.dashboard}>
+      <ScrollView style={styles.container}>
+        <View style={styles.hero}>
+          <View style={styles.row}>
+            <View style={styles.textWrap}>
+              <Text style={styles.text}>Hello, {email}</Text>
+              <Text style={styles.text2}>Book your next flight</Text>
+            </View>
+            <Image
+              source={require("@/assets/images/pp.jpg")}
+              style={styles.gambarProfile}
+            />
           </View>
-          <Image
-            source={require("@/assets/images/pp.jpg")}
-            style={styles.gambarProfile}
-          />
-        </View>
-        <View style={styles.tripSelector}>
-          <TouchableOpacity
-            style={[
-              styles.tabButton,
-              selectedTrip === "round" && styles.activeTabButton,
-            ]}
-            onPress={() => setSelectedTrip("round")}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                selectedTrip === "round" && styles.activeTabText,
-              ]}
-            >
-              Round Trip
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.tabButton,
-              selectedTrip === "one" && styles.activeTabButton,
-            ]}
-            onPress={() => setSelectedTrip("one")}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                selectedTrip === "one" && styles.activeTabText,
-              ]}
-            >
-              One way
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.tabButton,
-              selectedTrip === "multi" && styles.activeTabButton,
-            ]}
-            onPress={() => setSelectedTrip("multi")}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                selectedTrip === "multi" && styles.activeTabText,
-              ]}
-            >
-              Multi city
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={styles.form}>
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>From (Location)</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Masukkan lokasi anda"
-            value={lokasi}
-            onChangeText={(text) => setLokasi(text)}
-            // secureTextEntry={true}
-            autoCapitalize="none"
-          />
-        </View>
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>To (Destination)</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Masukkan destinasi yang ingin anda tuju"
-            value={destinasi}
-            onChangeText={(text) => setDestinasi(text)}
-            // secureTextEntry={true}
-            autoCapitalize="none"
-          />
-        </View>
-        <View style={styles.row2}>
-          <View style={styles.inputRow}>
-            <Text style={styles.label}>Departure</Text>
+          <View style={styles.tripSelector}>
             <TouchableOpacity
-              style={styles.inputButton}
-              onPress={openDeparturePicker}
+              style={[
+                styles.tabButton,
+                selectedTrip === "round" && styles.activeTabButton,
+              ]}
+              onPress={() => setSelectedTrip("round")}
             >
-              <Text style={styles.input}>{formatDate(departure)}</Text>
+              <Text
+                style={[
+                  styles.tabText,
+                  selectedTrip === "round" && styles.activeTabText,
+                ]}
+              >
+                Round Trip
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.tabButton,
+                selectedTrip === "one" && styles.activeTabButton,
+              ]}
+              onPress={() => setSelectedTrip("one")}
+            >
+              <Text
+                style={[
+                  styles.tabText,
+                  selectedTrip === "one" && styles.activeTabText,
+                ]}
+              >
+                One way
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.tabButton,
+                selectedTrip === "multi" && styles.activeTabButton,
+              ]}
+              onPress={() => setSelectedTrip("multi")}
+            >
+              <Text
+                style={[
+                  styles.tabText,
+                  selectedTrip === "multi" && styles.activeTabText,
+                ]}
+              >
+                Multi city
+              </Text>
             </TouchableOpacity>
           </View>
+        </View>
+        <View style={styles.form}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>From (Location)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Masukkan lokasi anda"
+              value={lokasi}
+              onChangeText={(text) => setLokasi(text)}
+              // secureTextEntry={true}
+              autoCapitalize="none"
+            />
+          </View>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>To (Destination)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Masukkan destinasi yang ingin anda tuju"
+              value={destinasi}
+              onChangeText={(text) => setDestinasi(text)}
+              // secureTextEntry={true}
+              autoCapitalize="none"
+            />
+          </View>
+          <View style={styles.row2}>
+            <View style={styles.inputRow}>
+              <Text style={styles.label}>Departure</Text>
+              <TouchableOpacity
+                style={styles.inputButton}
+                onPress={openDeparturePicker}
+              >
+                <Text style={styles.input}>{formatDate(departure)}</Text>
+              </TouchableOpacity>
+            </View>
 
-          <View style={styles.inputRow}>
-            <Text style={styles.label}>Return</Text>
-            <TouchableOpacity
-              style={styles.inputButton}
-              onPress={openReturnPicker}
-            >
-              <Text style={styles.input}>{formatDate(kembali)}</Text>
-            </TouchableOpacity>
+            <View style={styles.inputRow}>
+              <Text style={styles.label}>Return</Text>
+              <TouchableOpacity
+                style={styles.inputButton}
+                onPress={openReturnPicker}
+              >
+                <Text style={styles.input}>{formatDate(kembali)}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
+          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <Text style={styles.buttonText}>Submit</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Submit</Text>
-        </TouchableOpacity>
+        <View style={styles.popularSection}>
+          <Text style={styles.text3}>Popular Destination</Text>
+          <Image
+            source={require("@/assets/images/mentawai.jpg")}
+            style={styles.populer}
+            resizeMode="cover"
+          />
+        </View>
+      </ScrollView>
+      <View style={styles.bottomNavContainer}>
+        <View style={styles.bottomNavbar}>
+          <TouchableOpacity
+            style={[
+              styles.navItem,
+              activeTab === "home" && styles.activeNavItem,
+            ]}
+            onPress={() => setActiveTab("home")}
+          >
+            <Text style={styles.navIcon}>🏠</Text>
+            {activeTab === "home" && <Text style={styles.navText}>Home</Text>}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.navItem,
+              activeTab === "ticket" && styles.activeNavItem,
+            ]}
+            onPress={() => setActiveTab("ticket")}
+          >
+            <Text style={styles.navIcon}>🎫</Text>
+            {activeTab === "ticket" && (
+              <Text style={styles.navText}>Ticket</Text>
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.navItem,
+              activeTab === "bell" && styles.activeNavItem,
+            ]}
+            onPress={() => setActiveTab("bell")}
+          >
+            <Text style={styles.navIcon}>🔔</Text>
+            {activeTab === "bell" && <Text style={styles.navText}>Notice</Text>}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.navItem,
+              activeTab === "profile" && styles.activeNavItem,
+            ]}
+            onPress={() => setActiveTab("profile")}
+          >
+            <Text style={styles.navIcon}>🚪</Text>
+            {activeTab === "profile" && (
+              <Text style={styles.navText}>Profile</Text>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
-      <View style={styles.popularSection}>
-        <Text style={styles.text3}>Popular Destination</Text>
-        <Image
-          source={require("@/assets/images/mentawai.jpg")}
-          style={styles.populer}
-          resizeMode="cover"
-        />
-      </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F0E9B6",
+    // backgroundColor: "#F0E9B6",
   },
   hero: {
     backgroundColor: "#744577",
@@ -330,5 +383,54 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  dashboard: {
+    flex: 1,
+    backgroundColor: "#F0E9B6",
+  },
+  bottomNavContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    paddingBottom: 20,
+    backgroundColor: "transparent",
+  },
+  bottomNavbar: {
+    flexDirection: "row",
+    backgroundColor: "#BDA6CE",
+    width: "90%",
+    borderRadius: 30,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    justifyContent: "space-between",
+    alignItems: "center",
+
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 10,
+  },
+  navItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+  },
+  activeNavItem: {
+    backgroundColor: "#F0E9B6",
+  },
+  navIcon: {
+    fontSize: 20,
+  },
+  navText: {
+    color: "#744577",
+    fontWeight: "700",
+    fontSize: 14,
+    marginLeft: 6,
   },
 });
