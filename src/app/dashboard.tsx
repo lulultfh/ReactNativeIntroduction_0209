@@ -3,6 +3,7 @@ import { useState } from "react";
 import {
   Alert,
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -70,7 +71,7 @@ export default function home() {
     );
   };
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.hero}>
         <View style={styles.row}>
           <View style={styles.textWrap}>
@@ -181,7 +182,15 @@ export default function home() {
           <Text style={styles.buttonText}>Submit</Text>
         </TouchableOpacity>
       </View>
-    </View>
+      <View style={styles.popularSection}>
+        <Text style={styles.text3}>Popular Destination</Text>
+        <Image
+          source={require("@/assets/images/mentawai.jpg")}
+          style={styles.populer}
+          resizeMode="cover"
+        />
+      </View>
+    </ScrollView>
   );
 }
 
@@ -225,6 +234,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
   },
+  text3: {
+    marginBottom: 10,
+    color: "#744577",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  popularSection: {
+    marginHorizontal: 24,
+    marginTop: 20,
+    marginBottom: 30,
+  },
   gambarProfile: {
     width: 40,
     height: 40,
@@ -244,6 +264,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: "center",
     borderRadius: 21,
+  },
+  populer: {
+    backgroundColor: "#ccc",
+    width: "100%",
+    height: 180,
+    borderRadius: 20,
+    // marginHorizontal: 20,
+    // marginVertical: 10,
   },
   activeTabButton: { backgroundColor: "#744577" },
   tabText: { color: "#744577", fontWeight: "600" },
