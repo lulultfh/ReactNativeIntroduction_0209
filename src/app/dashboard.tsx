@@ -1,6 +1,7 @@
 import { useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Image,
   ScrollView,
@@ -15,12 +16,24 @@ import {
   DateTimePickerAndroid,
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import { Airport, fetchAirports } from "../data/airportService";
 
 export default function home() {
   const { email } = useLocalSearchParams();
 
   const [lokasi, setLokasi] = useState("");
   const [destinasi, setDestinasi] = useState("");
+  const [selectedLokasi, setSelectedLokasi] = useState<Airport | null>(null);
+  const [selectedDestinasi, setSelectedDestinasi] = useState<Airport | null>(
+    null,
+  );
+  const [lokasiSuggestions, setLokasiSuggestions] = useState<Airport[]>([]);
+  const [destinasiSuggestions, setDestinasiSuggestions] = useState<Airport[]>(
+    [],
+  );
+  const [loadingLokasi, setLoadingLokasi] = useState(false);
+  const [loadingDestinasi, setLoadingDestinasi] = useState(false);
+
   const [departure, setDeparture] = useState<Date>(new Date());
   const [kembali, setKembali] = useState<Date>(new Date());
   const [showDeparturePicker, setShowDeparturePicker] = useState(false);
@@ -64,15 +77,52 @@ export default function home() {
   >("home");
 
   const handleSubmit = () => {
-    if (!lokasi || !destinasi || !departure || !kembali) {
+    if (!selectedLokasi || !selectedDestinasi || !departure || !kembali) {
       Alert.alert("error", "Semua kolom wajib diisi!");
       return;
     }
     Alert.alert(
       "Sukses",
-      `Data terkirim!\n\nLokasi: ${lokasi}\nDestinasi: ${destinasi}\nDeparture: ${departure}\nKembali: ${kembali}`,
+      `Data terkirim!\n\nLokasi: ${selectedLokasi.city}(${selectedLokasi.iata})\nDestinasi: ${selectedDestinasi.city}(${selectedDestinasi.iata})\nDeparture: ${departure}\nKembali: ${kembali}`,
     );
   };
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      if (
+        lokasi &&
+        (!selectedLokasi ||
+          lokasi !== `${selectedLokasi.city} (${selectedLokasi.iata})`)
+      ) {
+        setLoadingLokasi(true);
+        const results = await fetchAirports(lokasi);
+        setLokasiSuggestions(results);
+        setLoadingLokasi(false);
+      } else {
+        setLokasiSuggestions([]);
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [lokasi]);
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(async () => {
+      if (
+        destinasi &&
+        (!selectedDestinasi ||
+          destinasi !== `${selectedDestinasi.city} (${selectedDestinasi.iata})`)
+      ) {
+        setLoadingDestinasi(true);
+        const results = await fetchAirports(destinasi);
+        setDestinasiSuggestions(results);
+        setLoadingDestinasi(false);
+      } else {
+        setDestinasiSuggestions([]);
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [destinasi]);
   return (
     <View style={styles.dashboard}>
       <ScrollView style={styles.container}>
@@ -141,25 +191,77 @@ export default function home() {
         <View style={styles.form}>
           <View style={styles.inputGroup}>
             <Text style={styles.label}>From (Location)</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Masukkan lokasi anda"
-              value={lokasi}
-              onChangeText={(text) => setLokasi(text)}
-              // secureTextEntry={true}
-              autoCapitalize="none"
-            />
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <TextInput
+                style={[styles.input, { flex: 1 }]}
+                placeholder="Cari kota atau kode IATA asal..."
+                value={lokasi}
+                onChangeText={(text) => setLokasi(text)}
+                autoCapitalize="none"
+              />
+              {loadingLokasi && (
+                <ActivityIndicator
+                  style={styles.loaderInside}
+                  color="#744577"
+                />
+              )}
+            </View>
+            {lokasiSuggestions.length > 0 && (
+              <View style={styles.dropdownContainer}>
+                {lokasiSuggestions.map((item, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.dropdownItem}
+                    onPress={() => {
+                      setSelectedLokasi(item);
+                      setLokasi(`${item.city} (${item.iata})`);
+                      setLokasiSuggestions([]);
+                    }}
+                  >
+                    <Text style={styles.dropdownItemText}>
+                      {item.city} ({item.iata}) - {item.name}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
           </View>
           <View style={styles.inputGroup}>
             <Text style={styles.label}>To (Destination)</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Masukkan destinasi yang ingin anda tuju"
-              value={destinasi}
-              onChangeText={(text) => setDestinasi(text)}
-              // secureTextEntry={true}
-              autoCapitalize="none"
-            />
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <TextInput
+                style={[styles.input, { flex: 1 }]}
+                placeholder="Cari kota atau kode IATA tujuan..."
+                value={destinasi}
+                onChangeText={(text) => setDestinasi(text)}
+                autoCapitalize="none"
+              />
+              {loadingDestinasi && (
+                <ActivityIndicator
+                  style={styles.loaderInside}
+                  color="#744577"
+                />
+              )}
+            </View>
+            {destinasiSuggestions.length > 0 && (
+              <View style={styles.dropdownContainer}>
+                {destinasiSuggestions.map((item, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.dropdownItem}
+                    onPress={() => {
+                      setSelectedDestinasi(item);
+                      setDestinasi(`${item.city} (${item.iata})`);
+                      setDestinasiSuggestions([]);
+                    }}
+                  >
+                    <Text style={styles.dropdownItemText}>
+                      {item.city} ({item.iata}) - {item.name}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
           </View>
           <View style={styles.row2}>
             <View style={styles.inputRow}>
@@ -433,4 +535,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginLeft: 6,
   },
+  dropdownContainer: {
+    backgroundColor: "#FFF",
+    borderRadius: 12,
+    marginTop: 4,
+    maxHeight: 160,
+    borderWidth: 1,
+    borderColor: "#DDD",
+    overflow: "scroll",
+  },
+  dropdownItem: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEE",
+  },
+  dropdownItemText: { fontSize: 14, color: "#333" },
+  loaderInside: { position: "absolute", right: 15 },
 });
